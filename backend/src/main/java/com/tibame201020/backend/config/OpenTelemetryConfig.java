@@ -69,7 +69,7 @@ public class OpenTelemetryConfig {
     }
 
     @Bean("openTelemetry")
-    @ConditionalOnProperty(prefix = "otel.collector",name = "enable",havingValue = "true")
+    @ConditionalOnProperty(prefix = "otel.collector", name = "enable", havingValue = "true")
     public OpenTelemetry openTelemetry() {
         return OpenTelemetrySdk.builder()
                 .setTracerProvider(sdkTracerProvider())

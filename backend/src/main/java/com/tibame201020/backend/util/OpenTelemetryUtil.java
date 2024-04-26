@@ -12,11 +12,12 @@ import org.slf4j.MDC;
 
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * handle add event to tracer
  */
-public class OpenTelemetryUtils {
+public class OpenTelemetryUtil {
     private static final String TRACE_ID = "traceId";
     private static final String EVENT_PATTERN = "%s %s";
     private static final String CURRENT_USER = "currentUser";
@@ -91,7 +92,7 @@ public class OpenTelemetryUtils {
     private static String getRequestParameters(HttpServletRequest request) {
         StringBuilder parameters = new StringBuilder();
         request.getParameterNames().asIterator().forEachRemaining(parameterName ->
-            parameters.append(parameterName).append(": ").append(request.getParameter(parameterName)).append("\n"));
+                parameters.append(parameterName).append(": ").append(request.getParameter(parameterName)).append("\n"));
 
         return parameters.toString();
     }
@@ -116,5 +117,10 @@ public class OpenTelemetryUtils {
             MDC.put(TRACE_ID, spanContext.getTraceId());
             MDC.put(CURRENT_USER, spanContext.getSpanId());
         }
+        MDC.put(CURRENT_USER,
+                Objects.isNull(SecurityContextUtil.getUserInfo()) ?
+                        "" :
+                        SecurityContextUtil.getUserInfo().getAccount()
+        );
     }
 }
