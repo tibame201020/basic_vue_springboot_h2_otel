@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+    <property resource="application.properties"/>
+    <property name="out.pattern"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) %magenta([%+10thread]) %cyan([traceId: %X{traceId:-} spanId: %X{spanId:-}]) %yellow(%logger{15}) - %msg%n"/>
+
+    <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${out.pattern}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <appender name="lokiAppender" class="com.github.loki4j.logback.Loki4jAppender">
+        <http>
+            <url>${loki.push.url}</url>
+        </http>
+        <format>
+            <label>
+                <pattern>
+                    app=${spring.application.name}, host=${HOSTNAME}, env=${management.metrics.tags.env}
+                </pattern>
+            </label>
+            <message>
+                <pattern>${out.pattern}</pattern>
+            </message>
+        </format>
+    </appender>
+</included>

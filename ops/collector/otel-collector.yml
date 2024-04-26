@@ -14,8 +14,6 @@ exporters:
     endpoint: "tempo:4317"
     tls:
       insecure: true
-  loki:
-    endpoint: "http://loki:3100/loki/api/v1/push"
   otlp/jaeger:
     endpoint: jaeger:4317
     tls:
@@ -37,6 +35,3 @@ service:
       receivers: [otlp]
       processors: [batch]
       exporters: [otlp, otlp/jaeger]
-    logs:
-      receivers: [otlp]
-      exporters: [loki]
