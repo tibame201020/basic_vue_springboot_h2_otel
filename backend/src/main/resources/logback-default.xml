@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <included>
+    <conversionRule conversionWord="custom_highlight" converterClass="com.tibame201020.backend.config.CustomLoggerHighlighting" />
     <property resource="application.properties"/>
     <property name="out.pattern"
-              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) %magenta([%+10thread]) %cyan([traceId: %X{traceId:-} spanId: %X{spanId:-}]) %yellow(%logger{15}) - %msg%n"/>
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) %magenta([%+10thread]) %cyan([traceId: %X{traceId:-} user: %X{currentUser:-}]) %yellow(%logger{15}) - %custom_highlight(%msg%n)"/>
 
     <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
