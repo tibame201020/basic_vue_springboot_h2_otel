@@ -36,6 +36,10 @@
                     <div class="col">
                         <el-button type="danger" @click="getdata('/mockException')">mockException</el-button>
                     </div>
+                    <br>
+                    <div class="col">
+                        <el-button type="danger" @click="getdata('/backoffice/test')">backoffice api test</el-button>
+                    </div>
                 </div>
             </div>
         </div>
