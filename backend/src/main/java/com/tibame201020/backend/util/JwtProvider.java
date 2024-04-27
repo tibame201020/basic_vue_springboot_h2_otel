@@ -30,7 +30,6 @@ public class JwtProvider {
     private final Algorithm algorithm;
     private final JWTVerifier verifier;
     private final Gson gson;
-
     private final String USER_INFO = "userInfo";
 
 

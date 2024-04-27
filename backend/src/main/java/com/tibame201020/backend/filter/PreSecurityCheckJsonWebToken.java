@@ -2,6 +2,8 @@ package com.tibame201020.backend.filter;
 
 import com.tibame201020.backend.constant.SystemProps;
 import com.tibame201020.backend.dto.CustomUserDTO;
+import com.tibame201020.backend.model.RequestRecord;
+import com.tibame201020.backend.service.RequestRecordService;
 import com.tibame201020.backend.util.JwtProvider;
 import com.tibame201020.backend.util.OpenTelemetryUtil;
 import com.tibame201020.backend.util.SecurityContextUtil;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -31,6 +34,7 @@ import java.util.Objects;
 @Slf4j
 public class PreSecurityCheckJsonWebToken extends OncePerRequestFilter {
     private final JwtProvider jwtProvider;
+    private final RequestRecordService requestRecordService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -40,8 +44,8 @@ public class PreSecurityCheckJsonWebToken extends OncePerRequestFilter {
         String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (Objects.isNull(authorizationHeader) || !authorizationHeader.startsWith(SystemProps.BEARER)) {
             log.warn("header don't have authorization token");
-            loggerRecord(request);
             filterChain.doFilter(request, response);
+            loggerRecord(request, response);
             return;
         }
 
@@ -52,7 +56,7 @@ public class PreSecurityCheckJsonWebToken extends OncePerRequestFilter {
         OpenTelemetryUtil.addContextInfoToMDC();
 
         filterChain.doFilter(request, response);
-        loggerRecord(request);
+        loggerRecord(request, response);
     }
 
     /**
@@ -76,9 +80,22 @@ public class PreSecurityCheckJsonWebToken extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }
 
-    private void loggerRecord(HttpServletRequest request) {
+    private void loggerRecord(HttpServletRequest request, HttpServletResponse response) {
         log.debug("api {}", request.getServletPath());
         log.debug("user {}", SecurityContextUtil.getUserInfo());
         log.debug("remote ip {}", request.getRemoteAddr());
+
+        log.debug("response.getStatus() {} ", response.getStatus());
+
+        requestRecordService.loggingRequestRecord(
+                RequestRecord.builder()
+                        .requestPath(request.getRequestURI())
+                        .userEmail(SecurityContextUtil.getCurrentUserEmail())
+                        .traceId(OpenTelemetryUtil.getTraceId())
+                        .isError(200 == response.getStatus())
+                        .responseStatus(response.getStatus())
+                        .recordDateTime(LocalDateTime.now())
+                        .build()
+        );
     }
 }

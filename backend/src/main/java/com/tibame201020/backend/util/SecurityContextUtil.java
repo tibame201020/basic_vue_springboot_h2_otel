@@ -4,6 +4,7 @@ package com.tibame201020.backend.util;
 import com.tibame201020.backend.dto.CustomUserDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -20,9 +21,10 @@ public class SecurityContextUtil {
     public static CustomUserDTO getUserInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        return (Objects.isNull(authentication) || authentication instanceof AnonymousAuthenticationToken) ?
-                null :
-                (CustomUserDTO) authentication.getDetails();
+        return (authentication instanceof UsernamePasswordAuthenticationToken &&
+                authentication.getDetails() instanceof CustomUserDTO) ?
+                (CustomUserDTO) authentication.getDetails() :
+                null;
     }
 
     public static String getCurrentUserEmail() {
