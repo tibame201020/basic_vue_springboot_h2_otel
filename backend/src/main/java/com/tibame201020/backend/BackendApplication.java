@@ -2,11 +2,12 @@ package com.tibame201020.backend;
 
 import com.tibame201020.backend.constant.CustomUserStatusEnum;
 import com.tibame201020.backend.constant.Role;
+import com.tibame201020.backend.model.AdminUser;
 import com.tibame201020.backend.model.CustomUser;
 import com.tibame201020.backend.model.UserRole;
+import com.tibame201020.backend.repo.AdminUserRepo;
 import com.tibame201020.backend.repo.CustomUserRepo;
 import com.tibame201020.backend.repo.UserRoleRepo;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,7 +15,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @SpringBootApplication
-@Slf4j
 public class BackendApplication {
 
     public static void main(String[] args) {
@@ -22,7 +22,7 @@ public class BackendApplication {
     }
 
     @Bean
-    CommandLineRunner run(CustomUserRepo customUserRepo, UserRoleRepo userRoleRepo) {
+    CommandLineRunner run(CustomUserRepo customUserRepo, UserRoleRepo userRoleRepo, AdminUserRepo adminUserRepo) {
         return args -> {
 
             CustomUser test = createCustomUser("test@123.cc");
@@ -42,6 +42,14 @@ public class BackendApplication {
             userRoleRepo.save(UserRole.builder().email(all.getEmail()).role(Role.PUBLISHER).build());
             userRoleRepo.save(UserRole.builder().email(all.getEmail()).role(Role.WRITER).build());
             userRoleRepo.save(UserRole.builder().email(all.getEmail()).role(Role.READER).build());
+
+            AdminUser admin = AdminUser.builder()
+                    .email("admin")
+                    .password(new BCryptPasswordEncoder().encode("admin"))
+                    .active(CustomUserStatusEnum.ACTIVE)
+                    .build();
+            adminUserRepo.save(admin);
+            userRoleRepo.save(UserRole.builder().email(admin.getEmail()).role(Role.ADMIN).build());
         };
     }
 

@@ -1,13 +1,14 @@
-package com.tibame201020.backend.config;
+package com.tibame201020.backend.config.security;
 
 import com.tibame201020.backend.constant.Role;
 import com.tibame201020.backend.filter.PreSecurityCheckJsonWebToken;
 import com.tibame201020.backend.handler.SecurityEventHandler;
+import com.tibame201020.backend.service.UserDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -27,11 +28,12 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
  * password encoder bean
  */
 @Configuration
-@EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfig {
+@Order(1)
+public class FrontOfficeSecurityConfig {
     private final SecurityEventHandler securityEventHandler;
     private final PreSecurityCheckJsonWebToken preSecurityCheckJsonWebToken;
+    private final UserDetailService userDetailService;
 
     /**
      * security filter chain
@@ -45,17 +47,14 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable);
-
-        http.sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
         http.formLogin(loginConfiguration -> {
-            loginConfiguration.loginPage("/api/login");
-            loginConfiguration.usernameParameter("account");
-            loginConfiguration.passwordParameter("password");
+            loginConfiguration.loginPage("/api/login")
+                    .usernameParameter("account")
+                    .passwordParameter("password");
 
             loginConfiguration.successHandler(securityEventHandler);
             loginConfiguration.failureHandler(securityEventHandler);
+
         });
 
         http.authorizeHttpRequests(
@@ -72,11 +71,14 @@ public class SecurityConfig {
                             .hasRole(Role.READER.name());
                     req.requestMatchers(new MvcRequestMatcher(introspector, "/api/writerPublisher/role"))
                             .hasAnyRole(Role.WRITER.name(), Role.PUBLISHER.name());
-                    req.anyRequest().authenticated();
 
+                    req.anyRequest().authenticated();
                 }
         );
 
+        http.userDetailsService(userDetailService);
+        http.csrf(AbstractHttpConfigurer::disable);
+        http.sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.addFilterBefore(preSecurityCheckJsonWebToken, UsernamePasswordAuthenticationFilter.class);
         http.cors(corsConfiguration -> corsConfiguration.configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues()));
         http.exceptionHandling(exceptionConfiguration -> exceptionConfiguration.authenticationEntryPoint(securityEventHandler));

@@ -23,7 +23,9 @@ import java.util.stream.Collectors;
 @Data
 @Builder
 public class Auth implements UserDetails {
-    private CustomUser customUser;
+    private String email;
+    private String password;
+    private CustomUserStatusEnum active;
     private List<Role> roleList;
 
     @Override
@@ -37,12 +39,12 @@ public class Auth implements UserDetails {
 
     @Override
     public String getPassword() {
-        return customUser.getPassword();
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return customUser.getEmail();
+        return email;
     }
 
     @Override
@@ -62,6 +64,6 @@ public class Auth implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return CustomUserStatusEnum.ACTIVE.equals(customUser.getActive());
+        return CustomUserStatusEnum.ACTIVE.equals(active);
     }
 }

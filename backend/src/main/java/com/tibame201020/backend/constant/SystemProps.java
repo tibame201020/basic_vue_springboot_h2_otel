@@ -15,7 +15,8 @@ public class SystemProps {
      * cors
      */
     public static final String LOCAL_5173 = "http://localhost:5173/";
-    public static final String[] ALLOW_CORS_URLS = new String[]{LOCAL_5173};
+    public static final String LOCAL_5174 = "http://localhost:5174/";
+    public static final String[] ALLOW_CORS_URLS = new String[]{LOCAL_5173, LOCAL_5174};
 
     /**
      * jwt

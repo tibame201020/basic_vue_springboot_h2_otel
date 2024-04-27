@@ -54,8 +54,8 @@ public class SecurityEventHandler implements
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         Auth auth = (Auth) authentication.getPrincipal();
         CustomUserDTO customUserDTO = CustomUserDTO.builder()
-                .email(auth.getCustomUser().getEmail())
-                .active(auth.getCustomUser().getActive())
+                .email(auth.getEmail())
+                .active(auth.getActive())
                 .roleList(auth.getRoleList())
                 .build();
 
