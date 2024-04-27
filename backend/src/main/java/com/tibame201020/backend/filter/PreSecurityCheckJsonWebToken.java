@@ -4,6 +4,7 @@ import com.tibame201020.backend.constant.SystemProps;
 import com.tibame201020.backend.dto.CustomUserDTO;
 import com.tibame201020.backend.util.JwtProvider;
 import com.tibame201020.backend.util.OpenTelemetryUtil;
+import com.tibame201020.backend.util.SecurityContextUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,6 +40,7 @@ public class PreSecurityCheckJsonWebToken extends OncePerRequestFilter {
         String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (Objects.isNull(authorizationHeader) || !authorizationHeader.startsWith(SystemProps.BEARER)) {
             log.warn("header don't have authorization token");
+            loggerRecord(request);
             filterChain.doFilter(request, response);
             return;
         }
@@ -50,6 +52,7 @@ public class PreSecurityCheckJsonWebToken extends OncePerRequestFilter {
         OpenTelemetryUtil.addContextInfoToMDC();
 
         filterChain.doFilter(request, response);
+        loggerRecord(request);
     }
 
     /**
@@ -71,5 +74,11 @@ public class PreSecurityCheckJsonWebToken extends OncePerRequestFilter {
 
         authenticationToken.setDetails(customUserDTO);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+    }
+
+    private void loggerRecord(HttpServletRequest request) {
+        log.debug("api {}", request.getServletPath());
+        log.debug("user {}", SecurityContextUtil.getUserInfo());
+        log.debug("remote ip {}", request.getRemoteAddr());
     }
 }

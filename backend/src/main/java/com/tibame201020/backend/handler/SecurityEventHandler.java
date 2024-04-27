@@ -2,7 +2,6 @@ package com.tibame201020.backend.handler;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import com.tibame201020.backend.dto.CustomException;
 import com.tibame201020.backend.dto.CustomUserDTO;
 import com.tibame201020.backend.model.security.Auth;
@@ -45,7 +44,6 @@ public class SecurityEventHandler implements
         AccessDeniedHandler,
         AuthenticationEntryPoint {
     private final JwtProvider jwtProvider;
-    private final Gson gson = new Gson();
     private final ObjectMapper objectMapper;
     private final Environment environment;
 
@@ -85,6 +83,7 @@ public class SecurityEventHandler implements
         OpenTelemetryUtil.addExceptionEvent(request, authenticationException);
 
         response.setStatus(HttpStatus.BAD_REQUEST.value());
+        objectMapper.writeValue(response.getOutputStream(), buildCustomException(HttpStatus.BAD_REQUEST.value(), "login fail"));
     }
 
     /**
@@ -97,8 +96,8 @@ public class SecurityEventHandler implements
         log.error("get user {}", SecurityContextUtil.getUserInfo());
         OpenTelemetryUtil.addExceptionEvent(request, accessDeniedException);
 
-
         response.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
+        objectMapper.writeValue(response.getOutputStream(), buildCustomException(HttpStatus.NOT_ACCEPTABLE.value(), "auth-user access deny"));
     }
 
     /**
@@ -112,5 +111,17 @@ public class SecurityEventHandler implements
         OpenTelemetryUtil.addExceptionEvent(request, authenticationException);
 
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        objectMapper.writeValue(response.getOutputStream(), buildCustomException(HttpStatus.UNAUTHORIZED.value(), "un-auth user deny"));
+    }
+
+    /**
+     * generate custom exception
+     */
+    private CustomException buildCustomException(int code, String message) {
+        return CustomException.builder()
+                .code(code)
+                .message(message)
+                .traceId(OpenTelemetryUtil.getTraceId())
+                .build();
     }
 }

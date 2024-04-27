@@ -1,6 +1,7 @@
 package com.tibame201020.backend.controller;
 
 import com.tibame201020.backend.constant.SystemProps;
+import com.tibame201020.backend.dto.CustomException;
 import com.tibame201020.backend.util.SecurityContextUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,7 +45,14 @@ public class RestApi {
     public String needWriterPublisherRole() {
         log.info("get user = {}", SecurityContextUtil.getUserInfo());
 
-        throw new RuntimeException("test");
-//        return "needWriterRole or needPublisherRole";
+        return "needWriterRole or needPublisherRole";
+    }
+
+    @RequestMapping("/mockException")
+    public String mockException() {
+        throw CustomException.builder()
+                .code(512)
+                .message("mock exception happened")
+                .build();
     }
 }

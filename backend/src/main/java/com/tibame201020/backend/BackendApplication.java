@@ -25,11 +25,11 @@ public class BackendApplication {
     CommandLineRunner run(CustomUserRepo customUserRepo, UserRoleRepo userRoleRepo) {
         return args -> {
 
-            CustomUser test = createCustomUser("test");
-            CustomUser publisher = createCustomUser("publisher");
-            CustomUser writer = createCustomUser("writer");
-            CustomUser reader = createCustomUser("reader");
-            CustomUser all = createCustomUser("all");
+            CustomUser test = createCustomUser("test@123.cc");
+            CustomUser publisher = createCustomUser("publisher@123.cc");
+            CustomUser writer = createCustomUser("writer@123.cc");
+            CustomUser reader = createCustomUser("reader@123.cc");
+            CustomUser all = createCustomUser("all@123.cc");
 
             customUserRepo.save(test);
             customUserRepo.save(publisher);

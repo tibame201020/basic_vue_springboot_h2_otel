@@ -62,6 +62,8 @@ public class SecurityConfig {
                 req -> {
                     req.requestMatchers(new MvcRequestMatcher(introspector, "/api/publishApi"))
                             .permitAll();
+                    req.requestMatchers(new MvcRequestMatcher(introspector, "/api/mockException"))
+                            .permitAll();
                     req.requestMatchers(new MvcRequestMatcher(introspector, "/api/publisher/role"))
                             .hasRole(Role.PUBLISHER.name());
                     req.requestMatchers(new MvcRequestMatcher(introspector, "/api/writer/role"))

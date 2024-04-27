@@ -27,4 +27,6 @@
             </message>
         </format>
     </appender>
+
+    <logger name="com.tibame201020.backend" level="DEBUG" />
 </included>
