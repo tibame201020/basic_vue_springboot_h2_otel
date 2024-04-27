@@ -1,6 +1,9 @@
 package com.tibame201020.backend.constant;
 
-public enum RoleEnum {
+/**
+ * role enum
+ */
+public enum Role {
     READER,
     PUBLISHER,
     WRITER,

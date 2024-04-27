@@ -15,7 +15,7 @@ public class WebCorsConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping(SystemProps.API_PREFIX)
+        registry.addMapping(SystemProps.API_MAPPING)
                 .allowedOrigins(SystemProps.ALLOW_CORS_URLS)
                 .allowedMethods(
                         HttpMethod.GET.name(),

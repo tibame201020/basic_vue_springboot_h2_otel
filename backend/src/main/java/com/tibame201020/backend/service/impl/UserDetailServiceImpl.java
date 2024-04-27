@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 作為實作UserDetailsService
@@ -22,9 +23,10 @@ public class UserDetailServiceImpl implements UserDetailService {
     private final UserRoleRepo userRoleRepo;
 
     @Override
+    @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         CustomUser customUser = customUserRepo.findById(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
 
         return Auth.builder()
                 .customUser(customUser)

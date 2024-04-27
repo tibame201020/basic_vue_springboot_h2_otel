@@ -14,11 +14,6 @@ import com.tibame201020.backend.util.OpenTelemetryUtil;
 @Aspect
 public class LogAspect {
 
-    @Before("execution(* org.slf4j.Logger.*(..))")
-    private void beforeLogger() {
-        OpenTelemetryUtil.addContextInfoToMDC();
-    }
-
     @Around("execution(* com.tibame201020.backend.controller..*(..)) || execution(* com.tibame201020.backend.service..*(..))")
     private Object aroundControllerAndService(ProceedingJoinPoint joinPoint) throws Throwable {
         OpenTelemetryUtil.addInputEvent(joinPoint);

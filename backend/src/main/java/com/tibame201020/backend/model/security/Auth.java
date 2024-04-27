@@ -1,7 +1,7 @@
 package com.tibame201020.backend.model.security;
 
-import com.tibame201020.backend.constant.CustomUserActiveEnum;
-import com.tibame201020.backend.constant.RoleEnum;
+import com.tibame201020.backend.constant.CustomUserStatusEnum;
+import com.tibame201020.backend.constant.Role;
 import com.tibame201020.backend.constant.SystemProps;
 import com.tibame201020.backend.model.CustomUser;
 import lombok.Builder;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @Builder
 public class Auth implements UserDetails {
     private CustomUser customUser;
-    private List<RoleEnum> roleList;
+    private List<Role> roleList;
 
     @Override
     public Set<GrantedAuthority> getAuthorities() {
@@ -62,6 +62,6 @@ public class Auth implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return CustomUserActiveEnum.ACTIVE.equals(customUser.getActive());
+        return CustomUserStatusEnum.ACTIVE.equals(customUser.getActive());
     }
 }

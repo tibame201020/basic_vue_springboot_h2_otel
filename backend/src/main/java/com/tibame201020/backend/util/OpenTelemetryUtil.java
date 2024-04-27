@@ -8,6 +8,8 @@ import io.opentelemetry.api.trace.SpanContext;
 import io.opentelemetry.api.trace.StatusCode;
 import jakarta.servlet.http.HttpServletRequest;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import java.util.Arrays;
@@ -23,6 +25,7 @@ public class OpenTelemetryUtil {
     private static final String CURRENT_USER = "currentUser";
 
     public static void addInputEvent(ProceedingJoinPoint joinPoint) {
+        Logger log = LoggerFactory.getLogger(joinPoint.getSignature().getDeclaringType());
         addContextInfoToMDC();
         String className = joinPoint.getSignature().getDeclaringType().getSimpleName();
         String methodName = joinPoint.getSignature().getName() + "()";
@@ -33,13 +36,17 @@ public class OpenTelemetryUtil {
                             AttributeKey.stringKey("args"), Arrays.toString(args),
                             AttributeKey.stringKey("type"), "input",
                             AttributeKey.stringKey("class"), className,
-                            AttributeKey.stringKey("method"), methodName
+                            AttributeKey.stringKey("method"), methodName,
+                            AttributeKey.stringKey("currentUser"), Objects.isNull(SecurityContextUtil.getUserInfo()) ? "" : SecurityContextUtil.getUserInfo().toString()
                     )
             );
         }
+        log.info("== START {}.{}", joinPoint.getTarget().getClass().getSimpleName(), methodName);
+        log.info("{} input: {}", methodName, Arrays.toString(args));
     }
 
     public static void addOutputEvent(ProceedingJoinPoint joinPoint, Object result) {
+        Logger log = LoggerFactory.getLogger(joinPoint.getSignature().getDeclaringType());
         addContextInfoToMDC();
         String className = joinPoint.getSignature().getDeclaringType().getSimpleName();
         String methodName = joinPoint.getSignature().getName() + "()";
@@ -50,11 +57,14 @@ public class OpenTelemetryUtil {
                             AttributeKey.stringKey("result"), Objects.toString(result),
                             AttributeKey.stringKey("type"), "output",
                             AttributeKey.stringKey("class"), className,
-                            AttributeKey.stringKey("method"), methodName
+                            AttributeKey.stringKey("method"), methodName,
+                            AttributeKey.stringKey("currentUser"), Objects.isNull(SecurityContextUtil.getUserInfo()) ? "" : SecurityContextUtil.getUserInfo().toString()
                     )
             );
         }
-
+        if (Objects.nonNull(result)) {
+            log.info("{} return: {}", methodName, result);
+        }
     }
 
     public static void addExceptionEvent(HttpServletRequest request, Exception exception) {
@@ -112,15 +122,18 @@ public class OpenTelemetryUtil {
      * add context-info to context
      */
     public static void addContextInfoToMDC() {
+        MDC.put(CURRENT_USER, SecurityContextUtil.getCurrentUserEmail());
+        MDC.put(TRACE_ID, getTraceId());
+    }
+
+    /**
+     * get traceId for tracing log
+     */
+    public static String getTraceId() {
         SpanContext spanContext = Span.current().getSpanContext();
         if (spanContext.isValid()) {
-            MDC.put(TRACE_ID, spanContext.getTraceId());
-            MDC.put(CURRENT_USER, spanContext.getSpanId());
+            return spanContext.getTraceId();
         }
-        MDC.put(CURRENT_USER,
-                Objects.isNull(SecurityContextUtil.getUserInfo()) ?
-                        "" :
-                        SecurityContextUtil.getUserInfo().getAccount()
-        );
+        return "";
     }
 }

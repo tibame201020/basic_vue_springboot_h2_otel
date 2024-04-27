@@ -1,5 +1,8 @@
 package com.tibame201020.backend.constant;
 
-public enum CustomUserActiveEnum {
+/**
+ * user status enum
+ */
+public enum CustomUserStatusEnum {
     ACTIVE, DISABLE
 }
