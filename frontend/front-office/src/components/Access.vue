@@ -2,10 +2,10 @@
     <div class="container">
         <div class="row">
             <div class="col">
-                <el-button type="warning" @click="getdata('/publishApi')">get-open-data</el-button>
+                <el-button type="warning" @click="getdata('/frontoffice/publishApi')">get-open-data</el-button>
             </div>
             <div class="col">
-                <el-button type="warning" @click="getdata('/needAuthApi')">get-auth-data</el-button>
+                <el-button type="warning" @click="getdata('/frontoffice/needAuthApi')">get-auth-data</el-button>
             </div>
         </div>
         <div class="row">
@@ -15,16 +15,16 @@
         </div>
         <div class="row">
             <div class="col">
-                <el-button type="info" @click="getdata('/publisher/role')">get-publisher-data</el-button>
+                <el-button type="info" @click="getdata('/frontoffice/publisher/role')">get-publisher-data</el-button>
             </div>
             <div class="col">
-                <el-button type="info" @click="getdata('/writer/role')">get-writer-data</el-button>
+                <el-button type="info" @click="getdata('/frontoffice/writer/role')">get-writer-data</el-button>
             </div>
             <div class="col">
-                <el-button type="info" @click="getdata('/reader/role')">get-reader-data</el-button>
+                <el-button type="info" @click="getdata('/frontoffice/reader/role')">get-reader-data</el-button>
             </div>
             <div class="col">
-                <el-button type="info" @click="getdata('/writerPublisher/role')">get-publisher/writer-data</el-button>
+                <el-button type="info" @click="getdata('/frontoffice/writerPublisher/role')">get-publisher/writer-data</el-button>
             </div>
             <div class="row">
                 <div class="col">
@@ -34,7 +34,7 @@
             <div class="row">
                 <div class="col">
                     <div class="col">
-                        <el-button type="danger" @click="getdata('/mockException')">mockException</el-button>
+                        <el-button type="danger" @click="getdata('/frontoffice/mockException')">mockException</el-button>
                     </div>
                     <br>
                     <div class="col">

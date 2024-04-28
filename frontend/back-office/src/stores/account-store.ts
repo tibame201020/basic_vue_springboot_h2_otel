@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import axiosUtil from "../utils/axios";
 import { RequestRecord } from "../models/RequestRecord";
 
-const baseUrl = "http://localhost:8089/api";
+const baseUrl = import.meta.env.VITE_API_URL
 
 const useAccountStore = defineStore("accountStore", {
   state: () => ({

@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import axiosUtil from "../utils/axios";
 
-const baseUrl = "http://localhost:8089/api";
+const baseUrl = import.meta.env.VITE_API_URL
 
 const useAccountStore = defineStore("accountStore", {
   state: () => ({
@@ -20,7 +20,7 @@ const useAccountStore = defineStore("accountStore", {
     login(): void {
       axiosUtil
         .post(
-          `${baseUrl}/login`,
+          `${baseUrl}/frontoffice/login`,
           {
             account: this.email,
             password: this.password,
