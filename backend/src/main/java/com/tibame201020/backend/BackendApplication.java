@@ -21,6 +21,9 @@ public class BackendApplication {
         SpringApplication.run(BackendApplication.class, args);
     }
 
+    /**
+     * when application startup, create users with role
+     */
     @Bean
     CommandLineRunner run(CustomUserRepo customUserRepo, UserRoleRepo userRoleRepo, AdminUserRepo adminUserRepo) {
         return args -> {

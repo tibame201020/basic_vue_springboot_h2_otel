@@ -8,5 +8,8 @@ import java.util.stream.Stream;
 
 public interface UserRoleRepo extends JpaRepository<UserRole, Long> {
 
+    /**
+     * find userRoles by email
+     */
     Stream<UserRole> findByEmail(String email);
 }

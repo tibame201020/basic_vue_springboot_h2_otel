@@ -17,6 +17,11 @@ import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
+/**
+ * 後台security設定
+ * for config
+ * /api/backoffice/login => adminUserDetailService
+ */
 @Configuration
 @RequiredArgsConstructor
 @Order(2)

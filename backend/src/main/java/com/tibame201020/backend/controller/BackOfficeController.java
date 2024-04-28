@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * back office controller
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(SystemProps.API_PREFIX + "/backoffice")
@@ -23,11 +26,17 @@ public class BackOfficeController {
         return "office test";
     }
 
+    /**
+     * get all custom user with role list
+     */
     @RequestMapping("/fetchAllUser")
     public List<CustomUserDTO> fetchAllUser() {
         return userDetailService.fetchAllUser();
     }
 
+    /**
+     * get all request-records
+     */
     @RequestMapping("/fetchAllRecords")
     public List<RequestRecord> fetchAllRecord() {
         return requestRecordService.fetchRequestRecords();

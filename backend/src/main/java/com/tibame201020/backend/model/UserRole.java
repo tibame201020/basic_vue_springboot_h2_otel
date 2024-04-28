@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
+/**
+ * user roles
+ */
 @Data
 @Entity
 @Table(name = "user_role")

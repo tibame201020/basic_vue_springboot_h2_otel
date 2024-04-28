@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
-
+/**
+ * front-office user
+ */
 @Data
 @Entity
 @Table(name = "custom_user")

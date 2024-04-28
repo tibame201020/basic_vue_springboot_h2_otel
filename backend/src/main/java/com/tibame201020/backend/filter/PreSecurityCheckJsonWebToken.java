@@ -80,11 +80,13 @@ public class PreSecurityCheckJsonWebToken extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }
 
+    /**
+     * log request record result to persistence
+     */
     private void loggerRecord(HttpServletRequest request, HttpServletResponse response) {
         log.debug("api {}", request.getServletPath());
         log.debug("user {}", SecurityContextUtil.getUserInfo());
         log.debug("remote ip {}", request.getRemoteAddr());
-
         log.debug("response.getStatus() {} ", response.getStatus());
 
         requestRecordService.loggingRequestRecord(

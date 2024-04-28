@@ -12,6 +12,9 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
+/**
+ * back-office user
+ */
 @Data
 @Entity
 @Table(name = "admin_user")
