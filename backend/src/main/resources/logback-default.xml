@@ -2,6 +2,7 @@
 <included>
     <conversionRule conversionWord="custom_highlight" converterClass="com.tibame201020.backend.config.CustomLoggerHighlighting" />
     <property resource="application.properties"/>
+    <property resource="application-${spring.profiles.active}.properties"/>
     <property name="out.pattern"
               value="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) %magenta([%+10thread]) %cyan([traceId: %X{traceId:-} user: %X{currentUser:-}]) %yellow(%logger{15}) - %custom_highlight(%msg%n)"/>
 

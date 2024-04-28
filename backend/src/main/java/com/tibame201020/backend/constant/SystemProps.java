@@ -9,6 +9,10 @@ public class SystemProps {
      */
     public static final String ROLE_PREFIX = "ROLE_";
     public static final String API_PREFIX = "/api";
+
+    public static final String FRONT_OFFICE_API_PREFIX = API_PREFIX + "/frontoffice";
+
+    public static final String BACK_OFFICE_API_PREFIX = API_PREFIX + "/backoffice";
     public static final String API_MAPPING = API_PREFIX + "/**";
 
     /**

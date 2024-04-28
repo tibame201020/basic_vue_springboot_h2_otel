@@ -24,15 +24,15 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
  */
 @Configuration
 @RequiredArgsConstructor
-@Order(2)
+@Order(1)
 public class BackOfficeSecurityConfig {
     private final SecurityEventHandler securityEventHandler;
     private final PreSecurityCheckJsonWebToken preSecurityCheckJsonWebToken;
     private final AdminUserDetailService adminUserDetailService;
 
-    @Bean
-    public SecurityFilterChain filterChainApp1(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
-         http.securityMatcher("/api/backoffice/**")
+    @Bean(name = "backOfficeSecurityChain")
+    public SecurityFilterChain backOfficeSecurityChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
+        http.securityMatcher(new MvcRequestMatcher(introspector, "/api/backoffice/**"))
                 .formLogin(httpSecurityFormLoginConfigurer ->
                         httpSecurityFormLoginConfigurer.loginPage("/api/backoffice/login")
                                 .usernameParameter("account")
@@ -40,6 +40,7 @@ public class BackOfficeSecurityConfig {
                                 .successHandler(securityEventHandler)
                                 .failureHandler(securityEventHandler)
                 );
+        http.userDetailsService(adminUserDetailService);
 
         http.authorizeHttpRequests(
                 req -> {
@@ -49,7 +50,6 @@ public class BackOfficeSecurityConfig {
                 }
         );
 
-        http.userDetailsService(adminUserDetailService);
         http.csrf(AbstractHttpConfigurer::disable);
         http.sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.addFilterBefore(preSecurityCheckJsonWebToken, UsernamePasswordAuthenticationFilter.class);
@@ -57,6 +57,6 @@ public class BackOfficeSecurityConfig {
         http.exceptionHandling(exceptionConfiguration -> exceptionConfiguration.authenticationEntryPoint(securityEventHandler));
         http.exceptionHandling(exceptionConfiguration -> exceptionConfiguration.accessDeniedHandler(securityEventHandler));
 
-         return http.build();
+        return http.build();
     }
 }

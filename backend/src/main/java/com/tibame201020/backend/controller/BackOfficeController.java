@@ -16,7 +16,7 @@ import java.util.List;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(SystemProps.API_PREFIX + "/backoffice")
+@RequestMapping(SystemProps.BACK_OFFICE_API_PREFIX)
 public class BackOfficeController {
     private final UserDetailService userDetailService;
     private final RequestRecordService requestRecordService;

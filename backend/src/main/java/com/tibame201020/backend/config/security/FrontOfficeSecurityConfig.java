@@ -21,34 +21,23 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 
 /**
- * 設定spring security filter chain
- * login config: 定義login api, parameters, success, fail handle
- * request chain:white list, need role, need auth
- * exception handle
- * password encoder bean
+ * 前台security設定
+ * for config
+ * /api/backoffice/login => adminUserDetailService
  */
 @Configuration
 @RequiredArgsConstructor
-@Order(1)
+@Order(2)
 public class FrontOfficeSecurityConfig {
     private final SecurityEventHandler securityEventHandler;
     private final PreSecurityCheckJsonWebToken preSecurityCheckJsonWebToken;
     private final UserDetailService userDetailService;
 
-    /**
-     * security filter chain
-     * close csrf
-     * close session
-     * login config: login api, usernameParameter, passwordParameter, successHandler, failureHandler
-     * request authorize config: white list, hasRole, authenticated
-     * add preSecurityCheckJsonWebToken before UsernamePasswordAuthenticationFilter: for valid jwt token
-     * apply cors default setting
-     * exceptionHandling: authenticationEntryPoint, accessDeniedHandler
-     */
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
-        http.formLogin(loginConfiguration -> {
-            loginConfiguration.loginPage("/api/login")
+    @Bean(name = "frontOfficeSecurityChain")
+    public SecurityFilterChain frontOfficeSecurityChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
+        http.securityMatcher(new MvcRequestMatcher(introspector, "/api/frontoffice/**"))
+        .formLogin(loginConfiguration -> {
+            loginConfiguration.loginPage("/api/frontoffice/login")
                     .usernameParameter("account")
                     .passwordParameter("password");
 
@@ -56,27 +45,26 @@ public class FrontOfficeSecurityConfig {
             loginConfiguration.failureHandler(securityEventHandler);
 
         });
-
+        http.userDetailsService(userDetailService);
         http.authorizeHttpRequests(
                 req -> {
-                    req.requestMatchers(new MvcRequestMatcher(introspector, "/api/publishApi"))
+                    req.requestMatchers(new MvcRequestMatcher(introspector, "/api/frontoffice/publishApi"))
                             .permitAll();
-                    req.requestMatchers(new MvcRequestMatcher(introspector, "/api/mockException"))
+                    req.requestMatchers(new MvcRequestMatcher(introspector, "/api/frontoffice/mockException"))
                             .permitAll();
-                    req.requestMatchers(new MvcRequestMatcher(introspector, "/api/publisher/role"))
+                    req.requestMatchers(new MvcRequestMatcher(introspector, "/api/frontoffice/publisher/role"))
                             .hasRole(Role.PUBLISHER.name());
-                    req.requestMatchers(new MvcRequestMatcher(introspector, "/api/writer/role"))
+                    req.requestMatchers(new MvcRequestMatcher(introspector, "/api/frontoffice/writer/role"))
                             .hasRole(Role.WRITER.name());
-                    req.requestMatchers(new MvcRequestMatcher(introspector, "/api/reader/role"))
+                    req.requestMatchers(new MvcRequestMatcher(introspector, "/api/frontoffice/reader/role"))
                             .hasRole(Role.READER.name());
-                    req.requestMatchers(new MvcRequestMatcher(introspector, "/api/writerPublisher/role"))
+                    req.requestMatchers(new MvcRequestMatcher(introspector, "/api/frontoffice/writerPublisher/role"))
                             .hasAnyRole(Role.WRITER.name(), Role.PUBLISHER.name());
 
                     req.anyRequest().authenticated();
                 }
         );
 
-        http.userDetailsService(userDetailService);
         http.csrf(AbstractHttpConfigurer::disable);
         http.sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.addFilterBefore(preSecurityCheckJsonWebToken, UsernamePasswordAuthenticationFilter.class);
@@ -87,12 +75,8 @@ public class FrontOfficeSecurityConfig {
         return http.build();
     }
 
-    /**
-     * password encoder bean
-     */
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 }

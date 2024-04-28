@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(SystemProps.API_PREFIX)
+@RequestMapping(SystemProps.FRONT_OFFICE_API_PREFIX)
 @Slf4j
 public class RestApi {
 
@@ -43,7 +43,6 @@ public class RestApi {
      */
     @RequestMapping("/writer/role")
     public String needWriterRole() {
-        log.info("get user = {}", SecurityContextUtil.getUserInfo());
         return "needWriterRole";
     }
 
@@ -52,7 +51,6 @@ public class RestApi {
      */
     @RequestMapping("/reader/role")
     public String needReaderRole() {
-        log.info("get user = {}", SecurityContextUtil.getUserInfo());
         return "needReaderRole";
     }
 
@@ -61,8 +59,6 @@ public class RestApi {
      */
     @RequestMapping("/writerPublisher/role")
     public String needWriterPublisherRole() {
-        log.info("get user = {}", SecurityContextUtil.getUserInfo());
-
         return "needWriterRole or needPublisherRole";
     }
 
